@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>إضافة سؤال</title>
+<style>
+body{font-family:Tahoma;background:#f0fdf4;padding:20px}
+input,button{width:100%;padding:10px;margin:5px 0}
+button{background:#16a34a;color:#fff;border:0}
+</style>
+</head>
+<body>
 
+<h2>إضافة سؤال</h2>
+
+<input id="q" placeholder="السؤال">
+
+<input id="a1" placeholder="الخيار 1">
+<input id="a2" placeholder="الخيار 2">
+<input id="a3" placeholder="الخيار 3">
+<input id="a4" placeholder="الخيار 4">
+
+<input id="c" placeholder="رقم الإجابة الصحيحة (0-3)">
+
+<button onclick="addQ()">إضافة</button>
+<button onclick="download()">تحميل JSON</button>
+
+<script>
+let data = [];
+
+function addQ(){
+    data.push({
+        q: document.getElementById("q").value,
+        a: [
+            document.getElementById("a1").value,
+            document.getElementById("a2").value,
+            document.getElementById("a3").value,
+            document.getElementById("a4").value
+        ],
+        c: parseInt(document.getElementById("c").value)
+    });
+
+    alert("تمت الإضافة");
+}
+
+function download(){
+    let blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "fiqh-questions.json";
+    a.click();
+}
+</script>
+
+</body>
+</html>
