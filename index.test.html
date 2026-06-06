@@ -1,1 +1,47 @@
 https://github.com/ieashehata1965-netizen/dev-quiz
+<script>
+let questions = [];
+let current = 0;
+let score = 0;
+
+async function loadQuestions(){
+    const res = await fetch("fiqh-questions.json");
+    questions = await res.json();
+    showQuestion();
+}
+
+function startExam(){
+    current = 0;
+    score = 0;
+    loadQuestions();
+}
+
+function showQuestion(){
+    if(current >= questions.length){
+        return showResult();
+    }
+
+    let q = questions[current];
+
+    let html = "<div class='question'>" + q.q + "<br><br>";
+
+    q.a.forEach((ans,i)=>{
+        html += `<button class="answer" onclick="check(${i})">${ans}</button>`;
+    });
+
+    html += "</div>";
+
+    document.getElementById("quiz").innerHTML = html;
+}
+
+function check(i){
+    if(i === questions[current].c) score++;
+    current++;
+    setTimeout(showQuestion,300);
+}
+
+function showResult(){
+    document.getElementById("quiz").innerHTML =
+        "<h2>النتيجة: " + score + "/" + questions.length + "</h2>";
+}
+</script>
