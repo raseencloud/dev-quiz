@@ -1,46 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>DEV Quiz Engine</title>
+<style>
+body{font-family:Tahoma;background:#ecfdf5;padding:20px;text-align:center}
+.card{max-width:700px;margin:auto;background:#fff;padding:20px;border-radius:12px}
+button{width:100%;padding:12px;margin:8px 0;cursor:pointer}
+.answer{background:#f3f4f6;border:1px solid #ddd}
+.answer:hover{background:#dcfce7}
+</style>
+</head>
+
+<body>
+
+<h2>🧪 DEV Quiz Engine</h2>
+
+<div class="card">
+
+<input id="name" placeholder="اسم المتدرب">
+<button onclick="start()">ابدأ</button>
+
+<div id="quiz"></div>
+
+</div>
+
 <script>
 let questions = [];
-let current = 0;
+let i = 0;
 let score = 0;
 
-async function loadQuestions(){
-    const res = await fetch("fiqh-questions.json");
+async function load(){
+    const res = await fetch("questions.json");
     questions = await res.json();
-    showQuestion();
 }
 
-function startExam(){
-    current = 0;
+function start(){
     score = 0;
-    loadQuestions();
+    i = 0;
+    load().then(show);
 }
 
-function showQuestion(){
-    if(current >= questions.length){
-        return showResult();
+function show(){
+    if(i >= questions.length){
+        return document.getElementById("quiz").innerHTML =
+        "<h3>النتيجة: " + score + "/" + questions.length + "</h3>";
     }
 
-    let q = questions[current];
+    let q = questions[i];
 
-    let html = "<div class='question'>" + q.q + "<br><br>";
+    let html = "<h3>" + q.q + "</h3>";
 
-    q.a.forEach((ans,i)=>{
-        html += `<button class="answer" onclick="check(${i})">${ans}</button>`;
+    q.a.forEach((x, idx)=>{
+        html += `<button class="answer" onclick="check(${idx})">${x}</button>`;
     });
-
-    html += "</div>";
 
     document.getElementById("quiz").innerHTML = html;
 }
 
-function check(i){
-    if(i === questions[current].c) score++;
-    current++;
-    setTimeout(showQuestion,300);
-}
-
-function showResult(){
-    document.getElementById("quiz").innerHTML =
-        "<h2>النتيجة: " + score + "/" + questions.length + "</h2>";
+function check(ans){
+    if(ans === questions[i].c) score++;
+    i++;
+    show();
 }
 </script>
+
+</body>
+</html>
