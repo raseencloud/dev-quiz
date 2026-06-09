@@ -191,11 +191,19 @@ async function startExam(){
     student = document.getElementById("studentName").value.trim();
     track = document.getElementById("track").value;
 
-    if(!student) return alert("أدخل الاسم");
+    if(!student){
+        alert("أدخل الاسم");
+        return;
+    }
 
     await loadBank();
 
-    let pool = bank;
+    if(!bank || !Array.isArray(bank) || bank.length === 0){
+        alert("فشل تحميل بنك الأسئلة");
+        return;
+    }
+
+    let pool = [...bank];
 
     let countValue = document.getElementById("count").value;
 
@@ -212,7 +220,7 @@ async function startExam(){
     showScreen("quiz");
     showQuestion();
 }
-
+    
 function showQuestion(){
 
     if(index >= exam.length){
