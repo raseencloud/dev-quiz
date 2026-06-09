@@ -176,6 +176,7 @@ function showScreen(id){
     document.getElementById(id).classList.add("active");
 }
 
+/* FIX: كانت مفقودة */
 function goSetup(){
     showScreen("setup");
 }
@@ -196,13 +197,12 @@ async function startExam(){
 
     let pool = bank;
 
-    let examCount;
     let countValue = document.getElementById("count").value;
 
     if(countValue === "all"){
         exam = pool;
     }else{
-        examCount = parseInt(countValue);
+        let examCount = parseInt(countValue);
         exam = pool.sort(()=>Math.random()-0.5).slice(0, examCount);
     }
 
@@ -250,12 +250,14 @@ function showResult(){
 
     document.getElementById("result").innerHTML = `
     <div class="card">
-        <h2>النتيجة</h2>
-        <p>${score} / ${exam.length}</p>
-        <p>${percent}%</p>
+        <h2>النتيجة النهائية</h2>
+
+        <p>النتيجة: ${score} / ${exam.length}</p>
+        <p>النسبة: ${percent}%</p>
 
         <button onclick="printCertificate()">طباعة الإفادة</button>
-    </div>`;
+    </div>
+    `;
 }
 
 function printCertificate(){
@@ -267,6 +269,7 @@ function printCertificate(){
     const record = {
         certId,
         name: student,
+        track,
         score,
         total: exam.length,
         percent,
@@ -277,6 +280,7 @@ function printCertificate(){
 
     const url =
         "certificate.html?name=" + encodeURIComponent(student) +
+        "&track=" + track +
         "&score=" + score +
         "&total=" + exam.length +
         "&percent=" + percent +
