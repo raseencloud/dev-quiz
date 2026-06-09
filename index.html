@@ -253,32 +253,8 @@ function showResult(){
     </div>`;
 }
 
-function printCertificate(){
+localStorage.setItem("certificates_index", [...])
 
-    const certId = "CIA-" + Date.now();
-
-    const percent = Math.round((score/exam.length)*100); // ✅ تعريف واضح
-
-    const record = {
-        certId,
-        name: student,
-        score,
-        total: exam.length,
-        percent: percent,
-        date: new Date().toISOString()
-    };
-
-    localStorage.setItem(certId, JSON.stringify(record));
-
-    const url =
-        "certificate.html?name=" + encodeURIComponent(student) +
-        "&score=" + score +
-        "&total=" + exam.length +
-        "&percent=" + percent +
-        "&id=" + certId;
-
-    window.location.href = url;
-}
 </script>
 
 </body>
