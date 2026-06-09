@@ -230,12 +230,13 @@ h2{
     </div>
 
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
 <script>
-
+    
 const params = new URLSearchParams(window.location.search);
 
-let name = params.get("name") || "Unknown";
+    let name = params.get("name") || "Unknown";
 let score = parseInt(params.get("score") || 0);
 let total = parseInt(params.get("total") || 0);
 let certId = params.get("id") || ("CIA-" + Date.now());
@@ -264,7 +265,7 @@ document.getElementById("percent").innerHTML = "Rate: " + percent + "%";
 document.getElementById("level").innerHTML = level;
 document.getElementById("certId").innerHTML = "Statement ID: " + certId;
 
-let token = btoa(JSON.stringify(record));
+let token = btoa(unescape(encodeURIComponent(JSON.stringify(record))));
 
 new QRCode(document.getElementById("qr"), {
     text: token,
@@ -274,5 +275,6 @@ new QRCode(document.getElementById("qr"), {
 
 </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
