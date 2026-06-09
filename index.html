@@ -187,8 +187,6 @@ async function startExam(){
     student = document.getElementById("studentName").value.trim();
     track = document.getElementById("track").value;
 
-    let count = document.getElementById("count").value;
-
     if(!student) return alert("أدخل الاسم");
 
     await loadBank();
@@ -197,11 +195,13 @@ async function startExam(){
         (part === "all" || q.part == part)
     );
 
-    if(count === "all"){
+    let examCount;
+
+    if(document.getElementById("count").value === "all"){
         exam = pool;
     }else{
-        count = parseInt(count);
-        exam = pool.sort(()=>Math.random()-0.5).slice(0, count);
+        examCount = parseInt(document.getElementById("count").value);
+        exam = pool.sort(()=>Math.random()-0.5).slice(0, examCount);
     }
 
     index = 0;
@@ -210,7 +210,7 @@ async function startExam(){
     showScreen("quiz");
     showQuestion();
 }
-function showQuestion(){
+    function showQuestion(){
 
     if(index>=exam.length){
         showResult();
