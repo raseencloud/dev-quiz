@@ -245,12 +245,14 @@ function printCertificate(){
 
     const certId = "CIA-" + Date.now();
 
+    const percent = Math.round((score/exam.length)*100); // ✅ تعريف واضح
+
     const record = {
         certId,
         name: student,
         score,
         total: exam.length,
-        percent: Math.round((score/exam.length)*100),
+        percent: percent,
         date: new Date().toISOString()
     };
 
@@ -265,7 +267,6 @@ function printCertificate(){
 
     window.location.href = url;
 }
-
 </script>
 
 </body>
