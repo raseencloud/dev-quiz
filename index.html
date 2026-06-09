@@ -122,12 +122,14 @@ button{
 <h2>الأكاديمية المهنية للتدقيق الداخلي</h2>
 </header>
 
+<!-- WELCOME -->
 <div id="welcome" class="screen active card">
 <h2>مرحبًا بك 👋</h2>
 <p class="small">منصة تدريب احترافية</p>
 <button onclick="goSetup()">بدء الاستخدام</button>
 </div>
 
+<!-- SETUP -->
 <div id="setup" class="screen card">
 
 <h2>إعداد الاختبار</h2>
@@ -154,6 +156,7 @@ button{
 
 </div>
 
+<!-- QUIZ -->
 <div id="quiz" class="screen"></div>
 <div id="result" class="result"></div>
 
@@ -161,12 +164,12 @@ button{
 
 <script>
 
-let bank=[];
-let exam=[];
-let index=0;
-let score=0;
-let student="";
-let track="";
+let bank = [];
+let exam = [];
+let index = 0;
+let score = 0;
+let student = "";
+let track = "";
 
 function showScreen(id){
     document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -191,16 +194,15 @@ async function startExam(){
 
     await loadBank();
 
-    let pool = bank.filter(q =>
-        (part === "all" || q.part == part)
-    );
+    let pool = bank;
 
     let examCount;
+    let countValue = document.getElementById("count").value;
 
-    if(document.getElementById("count").value === "all"){
+    if(countValue === "all"){
         exam = pool;
     }else{
-        examCount = parseInt(document.getElementById("count").value);
+        examCount = parseInt(countValue);
         exam = pool.sort(()=>Math.random()-0.5).slice(0, examCount);
     }
 
@@ -210,50 +212,78 @@ async function startExam(){
     showScreen("quiz");
     showQuestion();
 }
-    function showQuestion(){
 
-    if(index>=exam.length){
+function showQuestion(){
+
+    if(index >= exam.length){
         showResult();
         return;
     }
 
-    let q=exam[index];
+    let q = exam[index];
 
-    let html=`<div class="q-box">
-    <div class="q-title">${q.q}</div>`;
+    let html = `
+    <div class="q-box">
+        <div class="q-title">${q.q}</div>
+    `;
 
     q.a.forEach((o,i)=>{
-        html+=`<div class="option" onclick="answer(${i})">${o}</div>`;
+        html += `<div class="option" onclick="answer(${i})">${o}</div>`;
     });
 
-    html+=`</div>`;
+    html += `</div>`;
 
-    document.getElementById("quiz").innerHTML=html;
+    document.getElementById("quiz").innerHTML = html;
 }
 
 function answer(i){
-    if(i===exam[index].c) score++;
+    if(i === exam[index].c) score++;
     index++;
-    setTimeout(showQuestion,200);
+    setTimeout(showQuestion, 200);
 }
 
 function showResult(){
 
-    let percent=Math.round((score/exam.length)*100);
+    let percent = Math.round((score / exam.length) * 100);
 
-    document.getElementById("quiz").innerHTML="";
+    document.getElementById("quiz").innerHTML = "";
 
-    document.getElementById("result").innerHTML=`
+    document.getElementById("result").innerHTML = `
     <div class="card">
         <h2>النتيجة</h2>
-        <p>${score}/${exam.length}</p>
+        <p>${score} / ${exam.length}</p>
         <p>${percent}%</p>
 
         <button onclick="printCertificate()">طباعة الإفادة</button>
     </div>`;
 }
 
-localStorage.setItem("certificates_index", [...])
+function printCertificate(){
+
+    const certId = "CIA-" + Date.now();
+
+    const percent = Math.round((score / exam.length) * 100);
+
+    const record = {
+        certId,
+        name: student,
+        score,
+        total: exam.length,
+        percent,
+        date: new Date().toISOString()
+    };
+
+    localStorage.setItem(certId, JSON.stringify(record));
+
+    const url =
+        "certificate.html?name=" + encodeURIComponent(student) +
+        "&score=" + score +
+        "&total=" + exam.length +
+        "&percent=" + percent +
+        "&id=" + certId;
+
+    window.location.href = url;
+}
 
 </script>
 
