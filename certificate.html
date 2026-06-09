@@ -6,29 +6,9 @@
 
 <title>Assessment Completion Statement</title>
 
-<!-- QR CODE LIBRARY -->
 <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
 
 <style>
-
-/* ================= HEADER ================= */
-.logo{
-    text-align:center;
-    font-weight:900;
-    color:#1b5e20;
-    font-size:18px;
-}
-
-.sublogo{
-    text-align:center;
-    color:#2e7d32;
-    font-weight:700;
-    margin-top:5px;
-}
-
-/* ================= TITLES ================= */
-
-</style>
 
 /* ================= BASE ================= */
 body{
@@ -41,7 +21,6 @@ body{
     min-height:100vh;
 }
 
-   
 /* ================= A4 LANDSCAPE ================= */
 .cert{
     width:297mm;
@@ -85,6 +64,13 @@ body{
     color:#2e7d32;
     font-weight:700;
     margin-top:5px;
+}
+
+/* LOGO IMAGE */
+.academy-logo{
+    display:block;
+    margin:10px auto;
+    width:140px;
 }
 
 /* ================= TITLES ================= */
@@ -160,21 +146,9 @@ h2{
     z-index:2;
 }
 
-.seal-title{
-    font-size:10px;
-    font-weight:900;
-    color:#1b5e20;
-}
-
-.seal-name{
-    font-size:11px;
-    font-weight:900;
-}
-
-.seal-state{
-    font-size:10px;
-    margin-top:2px;
-}
+.seal-title{font-size:10px;font-weight:900;color:#1b5e20;}
+.seal-name{font-size:11px;font-weight:900;}
+.seal-state{font-size:10px;margin-top:2px;}
 
 /* ================= QR ================= */
 #qr{
@@ -188,8 +162,6 @@ h2{
         size:A4 landscape;
         margin:10mm;
     }
-
-    button{display:none;}
 
     body{background:#fff;}
 
@@ -212,22 +184,14 @@ h2{
 
     <div class="academy-header">
 
-    <img src="logo.png" class="academy-logo" alt="Academy Logo">
+        <img src="https://ieashehata1965-netizen.github.io/dev-quiz/logo.png" class="academy-logo">
 
-    <div>
-        <div class="logo">
-            Internal Audit & GRC Professional Academy
-        </div>
+        <div class="logo">Internal Audit & GRC Professional Academy</div>
+        <div class="sublogo">الأكاديمية المهنية للتدقيق الداخلي والحوكمة والامتثال</div>
 
-        <div class="sublogo">
-            الأكاديمية المهنية للتدقيق الداخلي والحوكمة والامتثال
-        </div>
     </div>
 
-</div>
-
     <h1>Assessment Completion Statement</h1>
-
     <h2>إفادة اجتياز تقييم منهج CIA ضمن نظام تدريب داخلي معتمد</h2>
 
     <div class="info" id="name"></div>
@@ -243,16 +207,14 @@ h2{
 
     <div class="bottom-row">
 
-        <!-- SEAL -->
         <div id="seal" class="seal">
             <div class="seal-inner">
                 <div class="seal-title">GRC ACADEMY</div>
                 <div class="seal-name">OFFICIAL SEAL</div>
-                <div id="sealState" class="seal-state">VERIFIED</div>
+                <div class="seal-state">VERIFIED</div>
             </div>
         </div>
 
-        <!-- QR -->
         <div id="qr"></div>
 
     </div>
@@ -264,8 +226,6 @@ h2{
 </div>
 
 <script>
-
-/* ================= INPUT ================= */
 const params = new URLSearchParams(window.location.search);
 
 let name = params.get("name") || "Unknown";
@@ -280,52 +240,26 @@ let level =
     percent >= 70 ? "Good (جيد)" :
     "Needs Improvement (يحتاج تطوير)";
 
-/* ================= HASH ENGINE ================= */
-function hash(str){
-    let h = 0;
-    for(let i=0;i<str.length;i++){
-        h = (h << 5) - h + str.charCodeAt(i);
-        h |= 0;
-    }
-    return Math.abs(h);
-}
-
-/* ================= BUILD RAW ================= */
-let raw = name + score + total + certId;
-let currentHash = hash(raw);
-
-/* ================= SAVE TO LEDGER ================= */
 let record = {
-    certId,
-    name,
-    score,
-    total,
-    percent,
-    hash: currentHash,
-    timestamp: Date.now(),
-    type: "CERTIFICATE"
+    certId, name, score, total, percent,
+    timestamp: Date.now()
 };
 
 localStorage.setItem(certId, JSON.stringify(record));
 
-/* ================= OUTPUT ================= */
 document.getElementById("name").innerHTML = "Name: " + name;
 document.getElementById("score").innerHTML = "Score: " + score + " / " + total;
 document.getElementById("percent").innerHTML = "Rate: " + percent + "%";
 document.getElementById("level").innerHTML = level;
 document.getElementById("certId").innerHTML = "Statement ID: " + certId;
 
-/* ================= QR ================= */
-    
-let token = btoa(unescape(encodeURIComponent(JSON.stringify(record))));
+let token = btoa(JSON.stringify(record));
 
 new QRCode(document.getElementById("qr"), {
     text: token,
     width: 110,
     height: 110
 });
-
-    
 </script>
 
 </body>
