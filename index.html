@@ -182,22 +182,32 @@ async function loadBank(){
 
 async function startExam(){
 
-    student=document.getElementById("studentName").value.trim();
-    track=document.getElementById("track").value;
+    student = document.getElementById("studentName").value.trim();
+    track = document.getElementById("track").value;
+
+    let count = document.getElementById("count").value;
 
     if(!student) return alert("أدخل الاسم");
 
     await loadBank();
 
-    exam = bank.sort(()=>Math.random()-0.5).slice(0,10);
+    let pool = bank.filter(q =>
+        (part === "all" || q.part == part)
+    );
 
-    index=0;
-    score=0;
+    if(count === "all"){
+        exam = pool;
+    }else{
+        count = parseInt(count);
+        exam = pool.sort(()=>Math.random()-0.5).slice(0, count);
+    }
+
+    index = 0;
+    score = 0;
 
     showScreen("quiz");
     showQuestion();
 }
-
 function showQuestion(){
 
     if(index>=exam.length){
