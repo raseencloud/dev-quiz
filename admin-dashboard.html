@@ -1,1 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>GRC Admin Dashboard</title>
+
+<style>
+
+body{
+    font-family: Tahoma;
+    margin:0;
+    background: linear-gradient(135deg,#f6f2e7,#efe2c1,#f8f5ea);
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+}
+
+/* HEADER */
+h1{
+    text-align:center;
+    color:#1b5e20;
+    margin-bottom:10px;
+}
+
+.sub{
+    text-align:center;
+    color:#555;
+    font-size:14px;
+}
+
+/* CARDS */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:20px;
+}
+
+.card{
+    background:#fff;
+    padding:15px;
+    border-radius:14px;
+    text-align:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card h2{
+    margin:0;
+    font-size:20px;
+    color:#1b5e20;
+}
+
+.card p{
+    margin:5px 0 0;
+    font-size:13px;
+    color:#666;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    margin-top:25px;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+    font-size:14px;
+}
+
+th{
+    background:#1b5e20;
+    color:#fff;
+}
+
+tr:hover{
+    background:#f7f7f7;
+}
+
+/* STATUS */
+.ok{
+    color:green;
+    font-weight:bold;
+}
+
+.bad{
+    color:red;
+    font-weight:bold;
+}
+
+button{
+    margin-top:15px;
+    padding:10px;
+    width:100%;
+    border:none;
+    background:#1b5e20;
+    color:#fff;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>GRC Admin Dashboard</h1>
+<p class="sub">Certificate Ledger & Audit Analytics Panel</p>
+
+<div class="grid">
+
+    <div class="card">
+        <h2 id="totalCerts">0</h2>
+        <p>Total Certificates</p>
+    </div>
+
+    <div class="card">
+        <h2 id="avgScore">0%</h2>
+        <p>Average Score</p>
+    </div>
+
+    <div class="card">
+        <h2 id="highPerf">0</h2>
+        <p>High Performers (≥85%)</p>
+    </div>
+
+    <div class="card">
+        <h2 id="tampered">0</h2>
+        <p>Risk / Invalid</p>
+    </div>
+
+</div>
+
+<button onclick="loadData()">Refresh Data</button>
+
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Score</th>
+    <th>%</th>
+    <th>Status</th>
+    <th>Risk</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+</table>
+
+</div>
+
+<script>
+
+/* ================= HASH ================= */
+function hash(str){
+    let h = 0;
+    for(let i=0;i<str.length;i++){
+        h = (h << 5) - h + str.charCodeAt(i);
+        h |= 0;
+    }
+    return Math.abs(h);
+}
+
+/* ================= LOAD LEDGER ================= */
+function loadData(){
+
+    let keys = Object.keys(localStorage);
+    let dataList = [];
+
+    let total = 0;
+    let sum = 0;
+    let high = 0;
+    let tampered = 0;
+
+    keys.forEach(k => {
+
+        try{
+            let item = JSON.parse(localStorage.getItem(k));
+
+            if(item && item.certId){
+
+                total++;
+                sum += item.percent;
+
+                /* verify integrity */
+                let raw = item.name + item.score + item.total + item.certId;
+                let checkHash = hash(raw);
+
+                let valid = (checkHash === item.hash);
+
+                if(valid && item.percent >= 85){
+                    high++;
+                }
+
+                if(!valid){
+                    tampered++;
+                }
+
+                dataList.push({
+                    id: item.certId,
+                    name: item.name,
+                    score: item.score,
+                    percent: item.percent,
+                    valid
+                });
+            }
+
+        }catch(e){}
+    });
+
+    /* ================= KPIs ================= */
+    document.getElementById("totalCerts").innerText = total;
+    document.getElementById("avgScore").innerText = total ? Math.round(sum/total) + "%" : "0%";
+    document.getElementById("highPerf").innerText = high;
+    document.getElementById("tampered").innerText = tampered;
+
+    /* ================= TABLE ================= */
+    let html = "";
+
+    dataList.forEach(d => {
+
+        html += `
+        <tr>
+            <td>${d.id}</td>
+            <td>${d.name}</td>
+            <td>${d.score}</td>
+            <td>${d.percent}%</td>
+            <td class="${d.valid ? 'ok':'bad'}">
+                ${d.valid ? 'VALID' : 'INVALID'}
+            </td>
+            <td class="${d.valid ? 'ok':'bad'}">
+                ${d.valid ? 'LOW' : 'HIGH'}
+            </td>
+        </tr>
+        `;
+    });
+
+    document.getElementById("tableBody").innerHTML = html;
+}
+
+/* initial load */
+loadData();
+
+</script>
+
+</body>
+</html>
