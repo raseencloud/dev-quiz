@@ -292,7 +292,8 @@ document.getElementById("level").innerHTML = level;
 document.getElementById("certId").innerHTML = "Statement ID: " + certId;
 
 /* ================= QR ================= */
-let token = btoa(JSON.stringify(record));
+    
+let token = btoa(unescape(encodeURIComponent(JSON.stringify(record))));
 
 new QRCode(document.getElementById("qr"), {
     text: token,
