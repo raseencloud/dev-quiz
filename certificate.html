@@ -6,7 +6,8 @@
 
 <title>Assessment Completion Statement</title>
 
-<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+<!-- QR LIBRARY (مرة واحدة فقط) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
 
@@ -32,7 +33,6 @@ body{
     position:relative;
     overflow:hidden;
     border:8px double #1b5e20;
-
     display:flex;
     flex-direction:column;
     justify-content:space-between;
@@ -56,7 +56,6 @@ body{
     text-align:center;
 }
 
-/* LOGO */
 .academy-logo{
     display:block;
     margin:10px auto;
@@ -64,7 +63,6 @@ body{
     height:auto;
 }
 
-/* TEXT */
 .logo{
     text-align:center;
     font-weight:900;
@@ -138,7 +136,6 @@ h2{
     width:120px;
     height:120px;
     border-radius:50%;
-    position:relative;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -147,11 +144,7 @@ h2{
     background: radial-gradient(circle, #fff 40%, #f3f3f3 100%);
 }
 
-.seal-inner{
-    text-align:center;
-    z-index:2;
-}
-
+.seal-inner{text-align:center;}
 .seal-title{font-size:10px;font-weight:900;color:#1b5e20;}
 .seal-name{font-size:11px;font-weight:900;}
 .seal-state{font-size:10px;margin-top:2px;}
@@ -162,7 +155,7 @@ h2{
     height:110px;
 }
 
-/* ================= PRINT ================= */
+/* ================= PRINT FIX ================= */
 @media print{
     @page{
         size:A4 landscape;
@@ -170,9 +163,10 @@ h2{
     }
 
     body{background:#fff;}
+    .cert{border:6px double #1b5e20;}
 
-    .cert{
-        border:6px double #1b5e20;
+    #qr{
+        display:block !important;
     }
 
     *{
@@ -213,7 +207,7 @@ h2{
 
     <div class="bottom-row">
 
-        <div id="seal" class="seal">
+        <div class="seal">
             <div class="seal-inner">
                 <div class="seal-title">GRC ACADEMY</div>
                 <div class="seal-name">OFFICIAL SEAL</div>
@@ -230,13 +224,12 @@ h2{
     </div>
 
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
+
 <script>
-    
+
 const params = new URLSearchParams(window.location.search);
 
-    let name = params.get("name") || "Unknown";
+let name = params.get("name") || "Unknown";
 let score = parseInt(params.get("score") || 0);
 let total = parseInt(params.get("total") || 0);
 let certId = params.get("id") || ("CIA-" + Date.now());
@@ -265,6 +258,7 @@ document.getElementById("percent").innerHTML = "Rate: " + percent + "%";
 document.getElementById("level").innerHTML = level;
 document.getElementById("certId").innerHTML = "Statement ID: " + certId;
 
+/* ✅ FIXED QR ENCODING (Arabic safe) */
 let token = btoa(unescape(encodeURIComponent(JSON.stringify(record))));
 
 new QRCode(document.getElementById("qr"), {
@@ -275,6 +269,5 @@ new QRCode(document.getElementById("qr"), {
 
 </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
